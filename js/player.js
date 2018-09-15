@@ -208,11 +208,20 @@ Player.prototype.update = function()
 		// Jumping
 		if ( this.keys[" "] && !this.falling )
 			velocity.z = 8;
-
+		
+		//Flying
+		if ( this.keys["f"] ) {
+			if ( this.keys[" "] ) {
+				velocity.z = 8;
+			} else {
+				velocity.z = 0;
+			}
+		}
+		
 		// Walking
 		var walkVelocity = new Vector( 0, 0, 0 );
-		if ( !this.falling )
-		{
+		//if ( !this.falling ) // Enable in-air movement
+		//{
 			if ( this.keys["w"] ) {
 				walkVelocity.x += Math.cos( Math.PI / 2 - this.angles[1] );
 				walkVelocity.y += Math.sin( Math.PI / 2 - this.angles[1] );
@@ -229,14 +238,15 @@ Player.prototype.update = function()
 				walkVelocity.x += Math.cos( -Math.PI / 2 + Math.PI / 2 - this.angles[1] );
 				walkVelocity.y += Math.sin( -Math.PI / 2 + Math.PI / 2 - this.angles[1] );
 			}
-		}
+		//}
 		if ( walkVelocity.length() > 0 ) {
 				walkVelocity = walkVelocity.normal();
 				velocity.x = walkVelocity.x * 4;
 				velocity.y = walkVelocity.y * 4;
 		} else {
-			velocity.x /= this.falling ? 1.01 : 1.5;
-			velocity.y /= this.falling ? 1.01 : 1.5;
+			// change the value when falling for less in-air dampening
+			velocity.x /= this.falling ? 1.05 : 1.5;
+			velocity.y /= this.falling ? 1.05 : 1.5;
 		}
 
 		// Resolve collision
